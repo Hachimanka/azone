@@ -53,3 +53,15 @@ src/
 ## Design tokens
 
 Colors, radius and shadows are defined in `src/index.css` (`@theme`). Keep them identical in the APAY repo.
+
+## Connecting to aznar-api
+
+Create `.env` with:
+
+```
+VITE_API_MODE=http
+VITE_API_URL=http://localhost:4000
+```
+
+Start `aznar-api` (`npm run dev` in that repo), then restart this app's dev server — Vite reads `.env` only at startup.
+Demo accounts are listed in the aznar-api README. Set `VITE_API_MODE=mock` to go back to built-in demo data.

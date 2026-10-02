@@ -1,15 +1,12 @@
 import { format, parseISO } from 'date-fns'
 
-const peso = new Intl.NumberFormat('en-PH', {
-  style: 'currency',
-  currency: 'PHP',
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 2,
-})
+const pesoWhole = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', maximumFractionDigits: 0 })
+const pesoCents = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
-/** Amounts arrive from the API as decimal strings to avoid float rounding. */
+/** Amounts arrive from the API as decimal strings. Whole pesos drop the centavos; otherwise always show two decimals. */
 export function formatPeso(amount: string | number) {
-  return peso.format(Number(amount))
+  const n = Number(amount)
+  return Number.isInteger(n) ? pesoWhole.format(n) : pesoCents.format(n)
 }
 
 export function formatDate(iso: string, pattern = 'MMM d, yyyy') {
