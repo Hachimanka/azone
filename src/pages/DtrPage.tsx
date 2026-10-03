@@ -20,11 +20,11 @@ export function DtrPage() {
 
   return (
     <>
-      <PageHeader eyebrow="Time & Attendance" title="Daily Time Record" description="Punches are synced to APAY for payroll computation." />
+      <PageHeader eyebrow="Time & Attendance" title="My Attendance" description="View-only. Time in and time out are recorded through APAY." />
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,380px)_1fr]">
         <div className="space-y-5">
-          <AttendanceCard showDtrLink={false} />
+          <AttendanceCard showAttendanceLink={false} />
           <div className="grid grid-cols-2 gap-3">
             <StatCard icon={CalendarCheck} label="Present" value={summary.data?.presentDays ?? '—'} hint="This month" to="/app/dtr" />
             <StatCard icon={TriangleAlert} tone="warning" label="Late" value={summary.data?.lateCount ?? '—'} hint="This month" to="/app/dtr" />

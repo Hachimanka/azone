@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { useMutation } from '@tanstack/react-query'
 import { motion } from 'motion/react'
 import { ArrowLeft, CalendarDays, Clock, FileText, Lock, Mail } from 'lucide-react'
-import { Logo } from '@/components/brand/Logo'
+import { Logo, LogoMark } from '@/components/brand/Logo'
 import { Button } from '@/components/ui/Button'
 import { Field, Input } from '@/components/ui/Field'
 import { api, isMockApi } from '@/services/api'
@@ -48,7 +48,10 @@ export function LoginPage() {
       <div className="relative hidden overflow-hidden bg-gradient-to-br from-primary via-primary-600 to-primary-700 p-12 text-white lg:flex lg:flex-col">
         <div className="absolute -top-24 -right-24 size-96 rounded-full bg-white/10" />
         <div className="absolute -bottom-32 -left-16 size-80 rounded-full bg-white/5" />
-        <p className="text-3xl font-extrabold tracking-tight">AZNAR</p>
+        <p className="relative flex items-center gap-2 text-3xl font-extrabold tracking-tight">
+          <LogoMark className="size-11 rounded-full ring-2 ring-white/40" />
+          Zone
+        </p>
         <div className="relative mx-auto my-auto w-full max-w-lg">
           <h2 className="text-4xl leading-tight font-bold text-white">Everything about your work, in one place.</h2>
           <p className="mt-4 text-white/80">Payslips, attendance, leaves and company news — on your desk or in your pocket.</p>

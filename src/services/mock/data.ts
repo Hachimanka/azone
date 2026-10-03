@@ -22,6 +22,7 @@ export const employee: Employee = {
   workSchedule: 'Mon–Fri · 8:00 AM – 5:00 PM',
   govIds: { sss: '34-•••••••-2', philhealth: '12-•••••••••-7', pagibig: '1211-••••-5530', tin: '•••-•••-482-000' },
   emergencyContact: { name: 'Ana Forrosuelo', relation: 'Spouse', phone: '+63 917 555 0199' },
+  avatarUrl: null,
 }
 
 /* ---------- Payslips: semi-monthly cut-offs, newest first ---------- */
@@ -42,9 +43,11 @@ function lastPeriods(count: number) {
 
 const otAmounts = ['1500.00', '0.00', '2250.00', '750.00', '0.00', '1125.00']
 
-export const payslips: Payslip[] = lastPeriods(6).map(({ start, end }, i) => {
+// Two years of cut-offs so the Payslips page year filter and pagination have something to work with
+export const payslips: Payslip[] = lastPeriods(48).map(({ start, end }, i) => {
+  const otAmount = otAmounts[i % otAmounts.length]
   const basic = 25000
-  const ot = Number(otAmounts[i])
+  const ot = Number(otAmount)
   const allowance = 2000
   const gross = basic + ot + allowance
   const tax = Math.round((gross - 26500) * 0.2 + 2000)
@@ -65,7 +68,7 @@ export const payslips: Payslip[] = lastPeriods(6).map(({ start, end }, i) => {
     net: `${gross - totalDeductions}.00`,
     earnings: [
       { label: 'Basic Pay', amount: `${basic}.00` },
-      { label: 'Overtime', amount: otAmounts[i] },
+      { label: 'Overtime', amount: otAmount },
       { label: 'Rice & Transport Allowance', amount: `${allowance}.00` },
     ],
     deductions,

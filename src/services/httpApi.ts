@@ -38,12 +38,13 @@ export const httpApi: AzoneApi = {
   login: (email, password) => request<Session>('/auth/login', { method: 'POST', body: json({ email, password, app: 'azone' }) }),
   getMe: () => request('/azone/me'),
   updateContact: (input) => request('/azone/me/contact', { method: 'PATCH', body: json(input) }),
+  setAvatar: (dataUrl) => request('/azone/me/avatar', { method: 'PUT', body: json({ dataUrl }) }),
+  removeAvatar: () => request('/azone/me/avatar', { method: 'DELETE' }),
 
   getPayslips: () => request('/azone/payslips'),
   getPayslip: (id) => request(`/azone/payslips/${id}`),
 
   getToday: () => request('/azone/attendance/today'),
-  punch: (kind) => request('/azone/attendance/punch', { method: 'POST', body: json({ kind }) }),
   getAttendance: (month) => request(`/azone/attendance?month=${month}`),
   getAttendanceSummary: () => request('/azone/attendance/summary'),
 

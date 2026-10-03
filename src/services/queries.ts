@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from './api'
-import type { NewEmployeeRequest, NewLeaveRequest, PunchKind } from './types'
+import type { NewEmployeeRequest, NewLeaveRequest } from './types'
 
 export const keys = {
   me: ['me'] as const,
@@ -30,17 +30,6 @@ export const useAnnouncements = () => useQuery({ queryKey: keys.announcements, q
 export const useAnnouncement = (id: string) => useQuery({ queryKey: keys.announcement(id), queryFn: () => api.getAnnouncement(id) })
 export const useNotifications = () => useQuery({ queryKey: keys.notifications, queryFn: api.getNotifications })
 export const useCompany = () => useQuery({ queryKey: keys.company, queryFn: api.getCompany, staleTime: Infinity })
-
-export function usePunch() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (kind: PunchKind) => api.punch(kind),
-    onSuccess: (day) => {
-      qc.setQueryData(keys.today, day)
-      qc.invalidateQueries({ queryKey: keys.summary })
-    },
-  })
-}
 
 export function useFileLeave() {
   const qc = useQueryClient()

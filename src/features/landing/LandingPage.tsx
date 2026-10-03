@@ -328,7 +328,7 @@ const features = [
     title: 'Profile',
     text: 'Your employment details, government IDs and emergency contacts in one secure profile.',
   },
-  { icon: Clock, tag: 'Track', title: 'Attendance / DTR', text: 'Time in and out from your phone and review your daily time record any time.' },
+  { icon: Clock, tag: 'Track', title: 'Attendance', text: 'See your time in, breaks and time out recorded through APAY, any time.' },
   { icon: CalendarDays, tag: 'Rest', title: 'Leaves', text: 'See your leave credits and file vacation, sick or emergency leave in seconds.' },
   { icon: Send, tag: 'Request', title: 'Requests', text: 'Request a COE, overtime, schedule change or reimbursement — no paper forms.' },
   { icon: FileText, tag: 'Get paid', title: 'Payslips', text: 'View a full breakdown of earnings and deductions, and save it as PDF.' },
@@ -422,7 +422,7 @@ function Connected() {
               <h3 className="mt-5 text-2xl font-bold">AZONE</h3>
               <p className="text-sm font-semibold text-primary">Employee Platform</p>
               <ul className="mt-5 space-y-2.5 text-sm text-ink">
-                {['Dashboard & profile', 'Payslips, DTR & leaves', 'Requests & announcements'].map((x) => (
+                {['Dashboard & profile', 'Payslips, attendance & leaves', 'Requests & announcements'].map((x) => (
                   <li key={x} className="flex gap-2">
                     <CheckCircle2 className="size-5 shrink-0 text-primary" /> {x}
                   </li>
@@ -554,7 +554,7 @@ function Footer() {
     <footer className="bg-navy text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4 lg:px-8">
         <div className="md:col-span-2">
-          <p className="text-2xl font-extrabold">AZNAR</p>
+          <p className="text-2xl font-extrabold">AZone</p>
           <p className="mt-1 text-sm text-white/60">Employee Platform</p>
           <p className="mt-4 max-w-sm text-sm text-white/60">
             AZONE brings your payslips, attendance, leaves and company news together — built for the people of Aznar.

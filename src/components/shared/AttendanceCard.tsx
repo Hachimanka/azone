@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, Clock, Clock3, Clock9, Clock12, Clock4, type LucideIcon } from 'lucide-react'
+import { ArrowRight, Clock, Clock3, Clock9, Clock12, Clock4, Fingerprint, type LucideIcon } from 'lucide-react'
 import { Card, CardHeader } from '@/components/ui/Card'
 import { Badge, type BadgeTone } from '@/components/ui/Badge'
-import { Button, buttonVariants } from '@/components/ui/Button'
+import { buttonVariants } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Misc'
-import { usePunch, useToday } from '@/services/queries'
+import { useToday } from '@/services/queries'
 import type { AttendanceStatus, PunchKind } from '@/services/types'
 import { formatTime } from '@/lib/format'
 import { cn } from '@/lib/cn'
@@ -25,13 +25,12 @@ export const statusTone: Record<AttendanceStatus, BadgeTone> = {
   holiday: 'primary',
 }
 
-export function AttendanceCard({ showDtrLink = true }: { showDtrLink?: boolean }) {
+/** View-only: punches are recorded through APAY, AZONE just shows them. */
+export function AttendanceCard({ showAttendanceLink = true }: { showAttendanceLink?: boolean }) {
   const { data: today, isLoading } = useToday()
-  const punch = usePunch()
-  const next = today ? rows.find((r) => today[r.key] === null) : undefined
 
   return (
-    <Card className="p-5 sm:p-6">
+    <Card className="flex flex-col p-5 sm:p-6">
       <CardHeader
         icon={Clock}
         title="Today's Attendance"
@@ -49,7 +48,7 @@ export function AttendanceCard({ showDtrLink = true }: { showDtrLink?: boolean }
         {rows.map(({ key, label, icon: Icon }) => (
           <li key={key} className="grid grid-cols-2 items-center py-3 text-sm">
             <span className="flex items-center gap-3 text-muted">
-              <Icon className={cn('size-[18px]', next?.key === key ? 'text-primary' : 'text-ink/70')} />
+              <Icon className="size-[18px] text-ink/70" />
               {label}
             </span>
             {isLoading ? <Skeleton className="h-4 w-16" /> : <span className="font-semibold text-navy">{formatTime(today?.[key] ?? null)}</span>}
@@ -57,17 +56,16 @@ export function AttendanceCard({ showDtrLink = true }: { showDtrLink?: boolean }
         ))}
       </ul>
 
-      <div className={cn('mt-4 grid gap-3', showDtrLink && 'grid-cols-2')}>
-        <Button disabled={!next || punch.isPending} onClick={() => next && punch.mutate(next.key)}>
-          {punch.isPending ? 'Saving…' : next ? next.label : 'Done for today'}
-        </Button>
-        {showDtrLink && (
-          <Link to="/app/dtr" className={buttonVariants({ variant: 'outline' })}>
-            View DTR
-          </Link>
-        )}
-      </div>
-      {punch.isError && <p className="mt-2 text-xs font-medium text-danger">{punch.error.message}</p>}
+      <p className="mt-4 flex items-start gap-2.5 rounded-xl bg-bg px-3.5 py-3 text-xs leading-relaxed text-muted">
+        <Fingerprint className="mt-px size-4 shrink-0 text-primary" />
+        Time in and time out are recorded through APAY. Times here update once your punches sync.
+      </p>
+
+      {showAttendanceLink && (
+        <Link to="/app/dtr" className={cn(buttonVariants({ variant: 'outline' }), 'mt-4 w-full')}>
+          View Attendance
+        </Link>
+      )}
     </Card>
   )
 }

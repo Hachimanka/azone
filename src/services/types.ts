@@ -22,6 +22,8 @@ export type Employee = {
   workSchedule: string
   govIds: { sss: string; philhealth: string; pagibig: string; tin: string }
   emergencyContact: { name: string; relation: string; phone: string }
+  /** Profile picture as a data URL (256px square), or null to show initials */
+  avatarUrl: string | null
 }
 
 export type Session = { token: string; employee: Employee }
@@ -127,12 +129,13 @@ export interface AzoneApi {
   login(email: string, password: string): Promise<Session>
   getMe(): Promise<Employee>
   updateContact(input: Pick<Employee, 'phone' | 'address' | 'emergencyContact'>): Promise<Employee>
+  setAvatar(dataUrl: string): Promise<Employee>
+  removeAvatar(): Promise<Employee>
 
   getPayslips(): Promise<Payslip[]>
   getPayslip(id: string): Promise<Payslip>
 
   getToday(): Promise<AttendanceDay>
-  punch(kind: PunchKind): Promise<AttendanceDay>
   getAttendance(month: string): Promise<AttendanceDay[]>
   getAttendanceSummary(): Promise<AttendanceSummary>
 

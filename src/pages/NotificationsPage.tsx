@@ -27,6 +27,7 @@ export function NotificationsPage() {
     <>
       <PageHeader
         title="Notifications"
+        description="Notifications are kept for 30 days, then deleted automatically."
         actions={
           hasUnread && (
             <Button variant="soft" size="sm" onClick={() => markRead.mutate(undefined)}>

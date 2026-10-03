@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { ArrowLeft, Megaphone } from 'lucide-react'
+import { useParams } from 'react-router-dom'
+import { Megaphone } from 'lucide-react'
 import { PageHeader, Skeleton, EmptyState } from '@/components/ui/Misc'
 import { Card } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
@@ -9,6 +9,7 @@ import { useAnnouncement, useAnnouncements } from '@/services/queries'
 import type { AnnouncementCategory } from '@/services/types'
 import { formatDate } from '@/lib/format'
 import { cn } from '@/lib/cn'
+import { useDetailCrumb } from '@/store/breadcrumb'
 
 const filters: ('All' | AnnouncementCategory)[] = ['All', 'HR', 'General', 'Policy', 'Event']
 
@@ -27,7 +28,7 @@ export function AnnouncementsPage() {
             onClick={() => setFilter(f)}
             className={cn(
               'shrink-0 rounded-full border px-4 py-1.5 text-sm font-semibold transition',
-              filter === f ? 'border-primary bg-primary text-white' : 'border-line bg-white text-ink hover:border-primary-200 hover:text-primary',
+              filter === f ? 'border-primary bg-primary text-white' : 'border-line bg-surface text-ink hover:border-primary-200 hover:text-primary',
             )}
           >
             {f}
@@ -56,12 +57,10 @@ export function AnnouncementsPage() {
 export function AnnouncementDetailPage() {
   const { id = '' } = useParams()
   const { data, isLoading, isError } = useAnnouncement(id)
+  useDetailCrumb(isError ? 'Not found' : data?.title)
 
   return (
     <div className="mx-auto max-w-3xl">
-      <Link to="/app/announcements" className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-muted hover:text-primary">
-        <ArrowLeft className="size-4" /> All announcements
-      </Link>
       <Card className="p-6 sm:p-10">
         {isError ? (
           <EmptyState icon={Megaphone} title="Announcement not found" />

@@ -1,5 +1,5 @@
 import { eachDayOfInterval, format, isWeekend, parseISO } from 'date-fns'
-import type { AzoneApi, AttendanceDay, EmployeeRequest, LeaveRequest, PunchKind, RequestKind } from '../types'
+import type { AzoneApi, AttendanceDay, EmployeeRequest, LeaveRequest, RequestKind } from '../types'
 import * as db from './data'
 
 /** In-memory stand-in for aznar-api, so the app works before the backend exists. */
@@ -11,7 +11,6 @@ class NotFoundError extends Error {
 }
 
 let today: AttendanceDay = db.buildTodayRecord()
-const punchOrder: PunchKind[] = ['timeIn', 'breakOut', 'breakIn', 'timeOut']
 
 const requestTitles: Record<RequestKind, string> = {
   coe: 'Certificate of Employment',
@@ -30,6 +29,14 @@ export const mockApi: AzoneApi = {
     Object.assign(db.employee, input)
     return wait(db.employee, 500)
   },
+  async setAvatar(dataUrl) {
+    db.employee.avatarUrl = dataUrl
+    return wait(db.employee, 500)
+  },
+  async removeAvatar() {
+    db.employee.avatarUrl = null
+    return wait(db.employee, 300)
+  },
 
   getPayslips: () => wait(db.payslips),
   async getPayslip(id) {
@@ -41,16 +48,6 @@ export const mockApi: AzoneApi = {
   async getToday() {
     if (today.date !== format(new Date(), 'yyyy-MM-dd')) today = db.buildTodayRecord()
     return wait(today)
-  },
-  async punch(kind) {
-    const next = punchOrder.find((k) => today[k] === null)
-    if (next !== kind) throw new Error(`Expected ${next ?? 'no more'} punch`)
-    today = { ...today, [kind]: new Date().toISOString(), status: 'present' }
-    if (kind === 'timeOut' && today.timeIn) {
-      const worked = (Date.now() - parseISO(today.timeIn).getTime()) / 36e5 - 1
-      today.hoursWorked = Math.max(0, Math.round(worked * 10) / 10)
-    }
-    return wait(today, 500)
   },
   getAttendance: (month) => wait(db.buildMonth(month)),
   async getAttendanceSummary() {
@@ -101,7 +98,12 @@ export const mockApi: AzoneApi = {
     return wait(item)
   },
 
-  getNotifications: () => wait(db.notifications, 200),
+  // Mirrors aznar-api: notifications older than 30 days are deleted when the list is loaded
+  async getNotifications() {
+    const cutoff = Date.now() - 30 * 864e5
+    db.notifications.splice(0, db.notifications.length, ...db.notifications.filter((n) => new Date(n.createdAt).getTime() >= cutoff))
+    return wait(db.notifications, 200)
+  },
   async markNotificationsRead(ids) {
     db.notifications.forEach((n) => {
       if (!ids || ids.includes(n.id)) n.read = true

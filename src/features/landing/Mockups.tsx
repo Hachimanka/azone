@@ -28,7 +28,7 @@ export function DesktopMockup({ className }: { className?: string }) {
       </div>
       <div className="flex items-center justify-between border-b border-line px-5 py-3">
         <span className="flex items-center gap-3">
-          <span className="text-base font-extrabold text-primary">AZNAR</span>
+          <span className="text-base font-extrabold text-brand">AZone</span>
           <span className="text-[10px] text-muted">Employee Platform</span>
         </span>
         <span className="flex items-center gap-3">
@@ -70,9 +70,10 @@ export function DesktopMockup({ className }: { className?: string }) {
                   <span className="font-semibold text-navy">{v}</span>
                 </p>
               ))}
-              <div className="mt-2 grid grid-cols-2 gap-1">
-                <span className="rounded bg-primary py-1 text-center text-[7px] font-semibold text-white">Time Out</span>
-                <span className="rounded border border-primary-200 py-1 text-center text-[7px] font-semibold text-primary">View DTR</span>
+              <div className="mt-2">
+                <span className="block rounded border border-primary-200 py-1 text-center text-[7px] font-semibold text-primary">
+                  View Attendance
+                </span>
               </div>
             </div>
             <div className="rounded-lg border border-line bg-white p-2.5">
@@ -110,7 +111,7 @@ export function PhoneMockup({ className }: { className?: string }) {
         </div>
         <div className="flex items-center justify-between px-4 pt-4">
           <span>
-            <span className="block text-sm font-extrabold text-primary">AZNAR</span>
+            <span className="block text-sm font-extrabold text-brand">AZone</span>
             <span className="block text-[7px] text-muted">Employee Platform</span>
           </span>
           <span className="flex size-6 items-center justify-center rounded-full bg-primary text-[8px] font-bold text-white">LF</span>
@@ -139,9 +140,8 @@ export function PhoneMockup({ className }: { className?: string }) {
               <span className="font-semibold text-navy">{v}</span>
             </p>
           ))}
-          <div className="mt-1.5 grid grid-cols-2 gap-1">
-            <span className="rounded bg-primary py-0.5 text-center text-[6px] font-semibold text-white">Time Out</span>
-            <span className="rounded border border-primary-200 py-0.5 text-center text-[6px] font-semibold text-primary">View DTR</span>
+          <div className="mt-1.5">
+            <span className="block rounded border border-primary-200 py-0.5 text-center text-[6px] font-semibold text-primary">View Attendance</span>
           </div>
         </div>
         <div className="mt-3 grid grid-cols-4 border-t border-line bg-white py-2">
