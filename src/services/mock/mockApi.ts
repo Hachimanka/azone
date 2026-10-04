@@ -16,13 +16,22 @@ const requestTitles: Record<RequestKind, string> = {
   coe: 'Certificate of Employment',
   schedule_change: 'Schedule Change',
   overtime: 'Overtime Request',
-  reimbursement: 'Reimbursement',
-  other: 'General Request',
+  maternity_leave: 'Maternity Leave',
+  paternity_leave: 'Paternity Leave',
+  solo_parent_leave: 'Solo Parent Leave',
+  study_leave: 'Study Leave',
+  other: 'Other Request',
 }
 
 export const mockApi: AzoneApi = {
-  async login(email) {
-    return wait({ token: `mock.${btoa(email)}`, employee: db.employee }, 700)
+  // Demo: a password starting with "temp" acts like an HR-issued one, to preview the forced change screen
+  async login(email, password) {
+    return wait({ token: `mock.${btoa(email)}`, employee: db.employee, mustChangePassword: /^temp/i.test(password) }, 700)
+  },
+  requestPasswordReset: () => wait(undefined, 600),
+  async changePassword(currentPassword, newPassword) {
+    if (newPassword === currentPassword) throw new Error('Choose a password different from your current one')
+    return wait({ token: `mock.${btoa(db.employee.email)}`, employee: db.employee, mustChangePassword: false }, 700)
   },
   getMe: () => wait(db.employee),
   async updateContact(input) {

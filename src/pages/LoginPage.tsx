@@ -1,13 +1,16 @@
+import { useState } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useMutation } from '@tanstack/react-query'
 import { motion } from 'motion/react'
-import { ArrowLeft, CalendarDays, Clock, FileText, Lock, Mail } from 'lucide-react'
+import { ArrowLeft, CalendarDays, Clock, FileText, Mail } from 'lucide-react'
 import { Logo, LogoMark } from '@/components/brand/Logo'
 import { Button } from '@/components/ui/Button'
 import { Field, Input } from '@/components/ui/Field'
+import { PasswordInput } from '@/components/ui/PasswordInput'
+import { ForgotPasswordForm } from '@/components/auth/ForgotPasswordForm'
 import { api, isMockApi } from '@/services/api'
 import { useAuth } from '@/store/auth'
 
@@ -23,6 +26,7 @@ export function LoginPage() {
   const setSession = useAuth((s) => s.setSession)
   const navigate = useNavigate()
   const from = (useLocation().state as { from?: string } | null)?.from ?? '/app'
+  const [view, setView] = useState<'sign-in' | 'forgot'>('sign-in')
 
   const login = useMutation({
     mutationFn: (v: FormValues) => api.login(v.email, v.password),
@@ -35,10 +39,11 @@ export function LoginPage() {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: isMockApi ? { email: 'leonard.forrosuelo@aznar.com', password: 'demo1234' } : undefined,
+    // No demo prefill: the placeholders show what to type, and demo mode accepts anything
   })
 
   if (session) return <Navigate to="/app" replace />
@@ -123,29 +128,39 @@ export function LoginPage() {
         </Link>
         <div className="mx-auto my-auto w-full max-w-sm py-10">
           <Logo to="/" />
-          <h1 className="mt-10 text-3xl font-bold tracking-tight">Welcome back</h1>
-          <p className="mt-2 text-sm text-muted">Sign in with your Aznar account.</p>
+          {view === 'forgot' ? (
+            <div className="mt-10">
+              <ForgotPasswordForm initialEmail={getValues('email') ?? ''} onBack={() => setView('sign-in')} />
+            </div>
+          ) : (
+            <>
+              <h1 className="mt-10 text-3xl font-bold tracking-tight">Welcome back</h1>
+              <p className="mt-2 text-sm text-muted">Sign in with your Aznar account.</p>
 
-          <form onSubmit={handleSubmit((v) => login.mutate(v))} className="mt-8 space-y-4">
-            <Field label="Work email" error={errors.email?.message}>
-              <div className="relative">
-                <Mail className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted" />
-                <Input type="email" autoComplete="username" className="pl-10" {...register('email')} />
-              </div>
-            </Field>
-            <Field label="Password" error={errors.password?.message}>
-              <div className="relative">
-                <Lock className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted" />
-                <Input type="password" autoComplete="current-password" className="pl-10" {...register('password')} />
-              </div>
-            </Field>
-            {login.isError && <p className="text-sm font-medium text-danger">{login.error.message}</p>}
-            <Button type="submit" size="lg" className="w-full" disabled={login.isPending}>
-              {login.isPending ? 'Signing in…' : 'Sign in'}
-            </Button>
-          </form>
-          {isMockApi && (
-            <p className="mt-6 rounded-xl bg-primary-50 p-3 text-center text-xs text-primary">Demo mode: any email and password works.</p>
+              <form onSubmit={handleSubmit((v) => login.mutate(v))} className="mt-8 space-y-4">
+                <Field label="Work email" error={errors.email?.message}>
+                  <div className="relative">
+                    <Mail className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted" />
+                    <Input type="email" autoComplete="username" placeholder="you@aznar.com" className="pl-10" {...register('email')} />
+                  </div>
+                </Field>
+                <Field label="Password" error={errors.password?.message}>
+                  <PasswordInput autoComplete="current-password" placeholder="Enter your password" {...register('password')} />
+                </Field>
+                <div className="-mt-1 flex justify-end">
+                  <button type="button" onClick={() => setView('forgot')} className="text-sm font-semibold text-primary hover:underline">
+                    Forgot password?
+                  </button>
+                </div>
+                {login.isError && <p className="text-sm font-medium text-danger">{login.error.message}</p>}
+                <Button type="submit" size="lg" className="w-full" disabled={login.isPending}>
+                  {login.isPending ? 'Signing in…' : 'Sign in'}
+                </Button>
+              </form>
+              {isMockApi && (
+                <p className="mt-6 rounded-xl bg-primary-50 p-3 text-center text-xs text-primary">Demo mode: any email and password works.</p>
+              )}
+            </>
           )}
         </div>
       </div>

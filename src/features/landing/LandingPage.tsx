@@ -330,7 +330,7 @@ const features = [
   },
   { icon: Clock, tag: 'Track', title: 'Attendance', text: 'See your time in, breaks and time out recorded through APAY, any time.' },
   { icon: CalendarDays, tag: 'Rest', title: 'Leaves', text: 'See your leave credits and file vacation, sick or emergency leave in seconds.' },
-  { icon: Send, tag: 'Request', title: 'Requests', text: 'Request a COE, overtime, schedule change or reimbursement — no paper forms.' },
+  { icon: Send, tag: 'Request', title: 'Requests', text: 'Request a COE, overtime, schedule change or special leave — no paper forms.' },
   { icon: FileText, tag: 'Get paid', title: 'Payslips', text: 'View a full breakdown of earnings and deductions, and save it as PDF.' },
   {
     icon: Megaphone,

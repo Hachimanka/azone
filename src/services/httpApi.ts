@@ -36,6 +36,9 @@ const json = (body: unknown) => JSON.stringify(body)
 /** Real aznar-api adapter — AZONE routes live under /azone, auth under /auth. */
 export const httpApi: AzoneApi = {
   login: (email, password) => request<Session>('/auth/login', { method: 'POST', body: json({ email, password, app: 'azone' }) }),
+  requestPasswordReset: (email) => request<void>('/auth/forgot-password', { method: 'POST', body: json({ email }) }),
+  changePassword: (currentPassword, newPassword) =>
+    request<Session>('/azone/me/password', { method: 'POST', body: json({ currentPassword, newPassword }) }),
   getMe: () => request('/azone/me'),
   updateContact: (input) => request('/azone/me/contact', { method: 'PATCH', body: json(input) }),
   setAvatar: (dataUrl) => request('/azone/me/avatar', { method: 'PUT', body: json({ dataUrl }) }),

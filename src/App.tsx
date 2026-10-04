@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Link, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import { buttonVariants } from '@/components/ui/Button'
 import { useAuth } from '@/store/auth'
@@ -19,11 +19,15 @@ const AnnouncementsPage = lazy(() => import('@/pages/AnnouncementsPage').then((m
 const AnnouncementDetailPage = lazy(() => import('@/pages/AnnouncementsPage').then((m) => ({ default: m.AnnouncementDetailPage })))
 const NotificationsPage = lazy(() => import('@/pages/NotificationsPage').then((m) => ({ default: m.NotificationsPage })))
 const CompanyPage = lazy(() => import('@/pages/CompanyPage').then((m) => ({ default: m.CompanyPage })))
+const ChangePasswordPage = lazy(() => import('@/pages/ChangePasswordPage').then((m) => ({ default: m.ChangePasswordPage })))
 
 function RequireAuth() {
   const session = useAuth((s) => s.session)
   const location = useLocation()
-  return session ? <Outlet /> : <Navigate to="/login" replace state={{ from: location.pathname }} />
+  if (!session) return <Navigate to="/login" replace state={{ from: location.pathname }} />
+  // Signed in with an HR-issued password: nothing else opens until it is replaced
+  if (session.mustChangePassword) return <Navigate to="/change-password" replace />
+  return <Outlet />
 }
 
 /** Installed app opens at /app — skip the marketing page when already signed in. */
@@ -34,12 +38,21 @@ function Home() {
 }
 
 export default function App() {
+  const { pathname } = useLocation()
+  // Dark mode belongs to the signed-in app only. index.html may switch it on before a redirect away from
+  // /app (e.g. to /change-password or /login); AppLayout never mounts then, so clear it here.
+  // (Child effects run first, so on /app routes AppLayout has already applied the user's theme.)
+  useEffect(() => {
+    if (!pathname.startsWith('/app')) document.documentElement.classList.remove('dark')
+  }, [pathname])
+
   return (
     <>
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/change-password" element={<ChangePasswordPage />} />
           <Route element={<RequireAuth />}>
             <Route path="/app" element={<AppLayout />}>
               <Route index element={<DashboardPage />} />

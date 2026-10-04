@@ -26,7 +26,8 @@ export type Employee = {
   avatarUrl: string | null
 }
 
-export type Session = { token: string; employee: Employee }
+/** `mustChangePassword`: signed in with an HR-issued password; AZONE shows only the change-password screen until it is replaced */
+export type Session = { token: string; employee: Employee; mustChangePassword?: boolean }
 
 export type MoneyLine = { label: string; amount: string }
 
@@ -78,18 +79,23 @@ export type LeaveRequest = {
 
 export type NewLeaveRequest = Pick<LeaveRequest, 'type' | 'startDate' | 'endDate' | 'reason'>
 
-export type RequestKind = 'coe' | 'schedule_change' | 'overtime' | 'reimbursement' | 'other'
+/** Request types an employee can file now */
+export type RequestKind =
+  'coe' | 'schedule_change' | 'overtime' | 'maternity_leave' | 'paternity_leave' | 'solo_parent_leave' | 'study_leave' | 'other'
+
+/** Retired types that can still appear on requests filed before they were removed */
+export type LegacyRequestKind = 'reimbursement'
 
 export type EmployeeRequest = {
   id: string
-  kind: RequestKind
+  kind: RequestKind | LegacyRequestKind
   title: string
   details: string
   status: RequestStatus
   filedAt: string
 }
 
-export type NewEmployeeRequest = Pick<EmployeeRequest, 'kind' | 'details'>
+export type NewEmployeeRequest = { kind: RequestKind; details: string }
 
 export type AnnouncementCategory = 'HR' | 'General' | 'Policy' | 'Event'
 
@@ -127,6 +133,10 @@ export type CompanyInfo = {
 
 export interface AzoneApi {
   login(email: string, password: string): Promise<Session>
+  /** Queues a reset for HR (no email service). Resolves the same whether or not the account exists. */
+  requestPasswordReset(email: string): Promise<void>
+  /** Replaces the password and returns a fresh session (clears mustChangePassword) */
+  changePassword(currentPassword: string, newPassword: string): Promise<Session>
   getMe(): Promise<Employee>
   updateContact(input: Pick<Employee, 'phone' | 'address' | 'emergencyContact'>): Promise<Employee>
   setAvatar(dataUrl: string): Promise<Employee>
